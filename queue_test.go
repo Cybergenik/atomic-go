@@ -208,9 +208,9 @@ func TestQueueParallelLarge(t *testing.T) {
 
 // BENCHMARKS:
 //
-// Comparing my Atomic Queue vs buffered channel
-// 
-///////
+// # Comparing my Atomic Queue vs buffered channel
+//
+// /////
 func runQueuePush(N int, q *AtomicQueue[int], wg *sync.WaitGroup) {
 	for i := 0; i < N; i++ {
 		go func(i int) {
@@ -230,25 +230,25 @@ func runQueuePop(N int, q *AtomicQueue[int], wg *sync.WaitGroup) {
 }
 
 func BenchmarkQueue(b *testing.B) {
-    for i:=0; i < b.N; i++ {
-        N := 10_000
-        q := &AtomicQueue[int]{}
-        q.Init(uint32(N))
-        wg := &sync.WaitGroup{}
-		wg.Add(N/2)
-        runQueuePush(N/2, q, wg)
-		wg.Add(N/2)
-        runQueuePop(N/2, q, wg)
-		wg.Add(N/2)
-        runQueuePush(N/2, q, wg)
-        wg.Wait()
-    }
+	for i := 0; i < b.N; i++ {
+		N := 10_000
+		q := &AtomicQueue[int]{}
+		q.Init(uint32(N))
+		wg := &sync.WaitGroup{}
+		wg.Add(N / 2)
+		runQueuePush(N/2, q, wg)
+		wg.Add(N / 2)
+		runQueuePop(N/2, q, wg)
+		wg.Add(N / 2)
+		runQueuePush(N/2, q, wg)
+		wg.Wait()
+	}
 }
 
 func runChanPush(N int, c chan *int, wg *sync.WaitGroup) {
 	for i := 0; i < N; i++ {
 		go func(i int) {
-            c <- &i
+			c <- &i
 			wg.Done()
 		}(i)
 	}
@@ -257,23 +257,23 @@ func runChanPush(N int, c chan *int, wg *sync.WaitGroup) {
 func runChanPop(N int, c chan *int, wg *sync.WaitGroup) {
 	for i := 0; i < N; i++ {
 		go func(i int) {
-            <-c
+			<-c
 			wg.Done()
 		}(i)
 	}
 }
 
 func BenchmarkChan(b *testing.B) {
-    for i:=0; i < b.N; i++ {
-        N := 10_000
-        c := make(chan *int, N)
-        wg := &sync.WaitGroup{}
-		wg.Add(N/2)
-        runChanPush(N/2, c, wg)
-		wg.Add(N/2)
-        runChanPop(N/2, c, wg)
-		wg.Add(N/2)
-        runChanPush(N/2, c, wg)
-        wg.Wait()
-    }
+	for i := 0; i < b.N; i++ {
+		N := 10_000
+		c := make(chan *int, N)
+		wg := &sync.WaitGroup{}
+		wg.Add(N / 2)
+		runChanPush(N/2, c, wg)
+		wg.Add(N / 2)
+		runChanPop(N/2, c, wg)
+		wg.Add(N / 2)
+		runChanPush(N/2, c, wg)
+		wg.Wait()
+	}
 }
