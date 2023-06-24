@@ -29,7 +29,7 @@ func (q *AtomicQueue[T]) Push(item *T) bool {
 	q.tailLock.Lock()
 	defer q.tailLock.Unlock()
 	if q.tail == q.size {
-		q.tail %= q.size
+		q.tail = 0
 	}
 	if q.buffer[q.tail] != nil {
 		return false
@@ -44,7 +44,7 @@ func (q *AtomicQueue[T]) Pop() *T {
 	q.headLock.Lock()
 	defer q.headLock.Unlock()
 	if q.head == q.size {
-		q.head %= q.size
+		q.head = 0
 	}
 	t := q.buffer[q.head]
 	if t == nil {
